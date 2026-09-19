@@ -1,0 +1,2 @@
+*ทำไฟล wordlist Byte Buffer ไว้อยู่แล้ว  จริงๆ โหลดเข้า ram ไว้ก่อน
+*แบ่ง paylode ไปเครื่องอื่นช่วยลด requst resource 
