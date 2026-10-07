@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Kho-beng-nae</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">⛏️</span>
+        <div>
+          <div class="title">Kho-beng-nae</div>
+          <div class="subtitle">content discovery · authorized targets only</div>
+        </div>
+      </div>
+      <div class="wordlist">
+        <select id="wl-select" title="active wordlist"></select>
+        <span id="wl-count" class="pill">0</span>
+        <button id="wl-load" class="btn ghost" title="Import a wordlist file">+ file</button>
+        <button id="wl-add-toggle" class="btn ghost" title="Type new words">+ words</button>
+        <button id="wl-del" class="btn ghost" title="Delete this list">🗑</button>
+        <span id="wl-status" class="msg"></span>
+      </div>
+    </header>
+
+    <div id="wl-add-row" class="wl-add hidden">
+      <input id="wl-add-input" class="grow" type="text" placeholder="new words — separated by space, comma or newline — appended to the active list" />
+      <button id="wl-add-go" class="btn primary">Add</button>
+      <button id="wl-add-cancel" class="btn ghost">Cancel</button>
+    </div>
+
+    <!-- ============ LIST VIEW ============ -->
+    <main id="view-list" class="view">
+      <section class="new-session card">
+        <h2>New session</h2>
+        <div class="row">
+          <input id="in-url" class="grow" type="text" placeholder="https://target.example  (your own / lab / CTF)" />
+          <input id="in-name" type="text" placeholder="name (optional)" />
+        </div>
+        <div class="row params">
+          <label>mode
+            <select id="p-mode">
+              <option value="both">discover + brute-force</option>
+              <option value="discover">discover only</option>
+              <option value="bruteforce">brute-force only</option>
+            </select>
+          </label>
+          <label class="chk"><input id="p-recurse" type="checkbox" checked /> recurse</label>
+          <label>depth <input id="p-depth" type="number" min="0" value="2" /></label>
+          <label>retries <input id="p-retries" type="number" min="0" value="2" /></label>
+          <label>start <input id="p-start" type="number" min="1" value="10" /></label>
+          <label>max <input id="p-max" type="number" min="1" value="100" /></label>
+          <label>timeout(s) <input id="p-timeout" type="number" min="1" value="8" /></label>
+          <label class="chk"><input id="p-skiptls" type="checkbox" /> skip TLS verify</label>
+        </div>
+        <div class="row params" id="discover-params">
+          <span class="params-label">discovery:</span>
+          <label class="chk"><input id="p-crawl" type="checkbox" checked /> crawl</label>
+          <label class="chk"><input id="p-js" type="checkbox" checked /> mine JS</label>
+          <label class="chk"><input id="p-robots" type="checkbox" checked /> robots/sitemap</label>
+          <label>crawl depth <input id="p-crawldepth" type="number" min="1" value="3" /></label>
+          <label>max pages <input id="p-maxpages" type="number" min="1" value="200" /></label>
+        </div>
+        <div class="row">
+          <button id="btn-create" class="btn primary">Create session</button>
+          <span id="create-msg" class="msg"></span>
+        </div>
+      </section>
+
+      <section>
+        <h2>Sessions</h2>
+        <div id="session-list" class="session-grid"></div>
+        <p id="no-sessions" class="empty">No sessions yet. Add a URL above to start.</p>
+      </section>
+    </main>
+
+    <!-- ============ DETAIL VIEW ============ -->
+    <main id="view-detail" class="view hidden">
+      <div class="detail-head">
+        <button id="btn-back" class="btn ghost">← Sessions</button>
+        <div class="detail-title">
+          <span id="d-name" class="d-name"></span>
+          <a id="d-url" class="d-url" href="#"></a>
+        </div>
+        <div class="detail-actions">
+          <span id="d-proto" class="pill"></span>
+          <span id="d-phase" class="pill"></span>
+          <span id="d-state" class="pill state"></span>
+          <button id="btn-run" class="btn primary">Run</button>
+          <button id="btn-stop" class="btn warn">Stop</button>
+          <button id="btn-del" class="btn danger">Delete</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" data-tab="paths">Paths <span id="tab-paths-n" class="tab-n">0</span></button>
+        <button class="tab" data-tab="endpoints">Endpoints <span id="tab-endpoints-n" class="tab-n">0</span></button>
+      </div>
+
+      <div class="metrics" id="metrics">
+        <div class="metric"><span class="m-val" id="m-conc">–</span><span class="m-lbl">concurrency</span></div>
+        <div class="metric"><span class="m-val" id="m-inflight">–</span><span class="m-lbl">in-flight</span></div>
+        <div class="metric"><span class="m-val" id="m-total">0</span><span class="m-lbl">requests</span></div>
+        <div class="metric"><span class="m-val" id="m-errors">0</span><span class="m-lbl">errors</span></div>
+        <div class="metric"><span class="m-val" id="m-retries">0</span><span class="m-lbl">retries</span></div>
+        <div class="metric"><span class="m-val" id="m-rate">0%</span><span class="m-lbl">err rate</span></div>
+        <div class="metric wide"><span class="m-val" id="m-hits">0</span><span class="m-lbl">hits</span></div>
+        <div class="metric wide"><span class="m-val" id="m-rps">0</span><span class="m-lbl">req/sec</span></div>
+        <div class="metric wide"><span class="m-val" id="m-time">0.0s</span><span class="m-lbl">time</span></div>
+      </div>
+
+      <div id="results" class="results tab-panel" data-panel="paths"></div>
+      <div id="endpoints" class="results tab-panel hidden" data-panel="endpoints"></div>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

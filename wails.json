@@ -1,0 +1,17 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Kho-beng-nae",
+  "outputfilename": "Kho-beng-nae",
+  "frontend:install": "",
+  "frontend:build": "",
+  "frontend:dev:watcher": "",
+  "frontend:dev:serverUrl": "",
+  "wailsjsdir": "./frontend/wailsjs",
+  "author": {
+    "name": "purity"
+  },
+  "info": {
+    "productName": "Kho-beng-nae",
+    "comments": "Recursive content-discovery scanner for authorized testing / CTF"
+  }
+}

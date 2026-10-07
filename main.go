@@ -1,50 +1,33 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"context"
+	"embed"
 
-	"Kho-beng-nae/wordlist"
-	"Kho-beng-nae/lib/scanner"
-	//"Kho-beng-nae/util"
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
+//go:embed all:frontend/dist
+var assets embed.FS
+
 func main() {
-	wl, err := wordlist.Load("wordlist/wordlist.txt")
+	app := NewApp()
 
+	err := wails.Run(&options.App{
+		Title:  "Kho-beng-nae — Content Discovery",
+		Width:  1200,
+		Height: 800,
+		AssetServer: &assetserver.Options{
+			Assets: assets,
+		},
+		BackgroundColour: &options.RGBA{R: 15, G: 17, B: 21, A: 1},
+		OnStartup:        app.startup,
+		Bind: []any{
+			app,
+		},
+	})
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println("Loaded paths:", wl.Len())
-
-	s := scanner.NewFastHTTP(
-		"https://tc-nextjs-tawny.vercel.app/",
-		100,
-		wl,
-	)
-
-	results := s.Scan(context.Background())
-
-	for result := range results {
-		path := wl.Get(int(result.PathIndex))
-
-		if result.Err != nil {
-			fmt.Printf(
-				"[ERR] /%s -> %v\n",
-				path,
-				result.Err,
-			)
-			continue
-		}
-
-		fmt.Printf(
-			"[%d] /%s size=%d time=%v\n",
-			result.StatusCode,
-			path,
-			result.Size,
-			result.Duration,
-		)
+		panic(err)
 	}
 }

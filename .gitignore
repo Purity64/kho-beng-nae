@@ -1,0 +1,8 @@
+# Wails build output
+/build/bin/
+# Wails-generated JS bindings (regenerated on build)
+/frontend/wailsjs/
+# Go
+*.exe
+*.test
+*.out
